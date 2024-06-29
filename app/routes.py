@@ -120,8 +120,6 @@ def outbound_leads():
     return render_template('outbound_leads.html', title='Outbound Leads', leads=leads)
 
 
-
-
 @app.route('/mqls', methods=['GET', 'POST'])
 def mqls():
     mqls = MQL.query.all()
@@ -146,6 +144,16 @@ def mqls():
             db.session.commit()
         elif action.startswith('save_'):
             mql = MQL.query.get_or_404(mql_id)
+            if mql.lead_type == 'inbound':
+                lead = mql.inbound_lead
+            else:
+                lead = mql.outbound_lead
+
+            lead.name = request.form[f'name_{mql_id}']
+            lead.email = request.form[f'email_{mql_id}']
+            lead.phone = request.form[f'phone_{mql_id}']
+            lead.created_at = datetime.strptime(request.form[f'created_at_{mql_id}'], '%Y-%m-%d')
+
             mql.created_at = datetime.strptime(request.form[f'created_at_{mql_id}'], '%Y-%m-%d')
             db.session.commit()
         return redirect(url_for('mqls'))
@@ -165,6 +173,15 @@ def sqls():
             db.session.commit()
         elif action.startswith('save_'):
             sql = SQL.query.get_or_404(sql_id)
+            if sql.mql.lead_type == 'inbound':
+                lead = sql.mql.inbound_lead
+            else:
+                lead = sql.mql.outbound_lead
+
+            lead.name = request.form[f'name_{sql_id}']
+            lead.email = request.form[f'email_{sql_id}']
+            lead.phone = request.form[f'phone_{sql_id}']
+
             sql.created_at = datetime.strptime(request.form[f'created_at_{sql_id}'], '%Y-%m-%d')
             db.session.commit()
         return redirect(url_for('sqls'))

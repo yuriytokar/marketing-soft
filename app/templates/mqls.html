@@ -18,17 +18,19 @@
           <form method="post">
             <td>{{ mql.lead_type }}</td>
             {% if mql.lead_type == 'inbound' %}
-              <td>{{ mql.inbound_lead.name }}</td>
-              <td>{{ mql.inbound_lead.email }}</td>
-              <td>{{ mql.inbound_lead.phone }}</td>
+              <td><input type="text" name="name_{{ mql.id }}" value="{{ mql.inbound_lead.name }}" class="form-control" readonly></td>
+              <td><input type="email" name="email_{{ mql.id }}" value="{{ mql.inbound_lead.email }}" class="form-control" readonly></td>
+              <td><input type="text" name="phone_{{ mql.id }}" value="{{ mql.inbound_lead.phone }}" class="form-control" readonly></td>
             {% else %}
-              <td>{{ mql.outbound_lead.name }}</td>
-              <td>{{ mql.outbound_lead.email }}</td>
-              <td>{{ mql.outbound_lead.phone }}</td>
+              <td><input type="text" name="name_{{ mql.id }}" value="{{ mql.outbound_lead.name }}" class="form-control" readonly></td>
+              <td><input type="email" name="email_{{ mql.id }}" value="{{ mql.outbound_lead.email }}" class="form-control" readonly></td>
+              <td><input type="text" name="phone_{{ mql.id }}" value="{{ mql.outbound_lead.phone }}" class="form-control" readonly></td>
             {% endif %}
-            <td>{{ mql.created_at.strftime('%Y-%m-%d') }}</td>
+            <td><input type="date" name="created_at_{{ mql.id }}" value="{{ mql.created_at.strftime('%Y-%m-%d') }}" class="form-control" readonly></td>
             <td>
               <input type="hidden" name="mql_id" value="{{ mql.id }}">
+              <button type="button" class="btn btn-warning" onclick="enableEditing({{ mql.id }})">Edit</button>
+              <button type="submit" name="action" value="save_{{ mql.id }}" class="btn btn-success" style="display: none;">Save</button>
               <button type="submit" name="action" value="sql_{{ mql.id }}" class="btn btn-success">Mark as SQL</button>
               <button type="submit" name="action" value="delete_{{ mql.id }}" class="btn btn-danger">Delete</button>
             </td>
@@ -37,4 +39,14 @@
       {% endfor %}
     </tbody>
   </table>
+
+  <script>
+    function enableEditing(id) {
+      document.getElementsByName('name_' + id)[0].removeAttribute('readonly');
+      document.getElementsByName('email_' + id)[0].removeAttribute('readonly');
+      document.getElementsByName('phone_' + id)[0].removeAttribute('readonly');
+      document.getElementsByName('created_at_' + id)[0].removeAttribute('readonly');
+      document.querySelector('button[value="save_' + id + '"]').style.display = 'inline-block';
+    }
+  </script>
 {% endblock %}
