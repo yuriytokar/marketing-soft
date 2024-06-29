@@ -4,7 +4,6 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>Lead Type</th>
         <th>Lead Name</th>
         <th>Lead Email</th>
         <th>Lead Phone</th>
@@ -16,7 +15,6 @@
       {% for mql in mqls %}
         <tr>
           <form method="post">
-            <td>{{ mql.lead_type }}</td>
             {% if mql.lead_type == 'inbound' %}
               <td><input type="text" name="name_{{ mql.id }}" value="{{ mql.inbound_lead.name }}" class="form-control" readonly></td>
               <td><input type="email" name="email_{{ mql.id }}" value="{{ mql.inbound_lead.email }}" class="form-control" readonly></td>

@@ -43,7 +43,113 @@ def search_leads():
             results = query.all()
             if not results:
                 flash('No leads found matching the criteria.')
-    return render_template('search_leads.html', title='Search Leads', results=results)
+            else:
+                if lead_type == 'mql':
+                    results = [mql.inbound_lead if mql.lead_type == 'inbound' else mql.outbound_lead for mql in results]
+                elif lead_type == 'sql':
+                    results = [sql.mql.inbound_lead if sql.mql.lead_type == 'inbound' else sql.mql.outbound_lead for sql
+                               in results]
+
+    if request.method == 'POST' and results:
+        action = request.form.get('action')
+        lead_id = request.form.get('lead_id')
+        lead_type = request.form.get('lead_type')
+
+        if lead_id is not None:
+            lead_id = int(lead_id)
+
+            if action.startswith('delete_'):
+                if lead_type == 'inbound':
+                    lead = InboundLead.query.get_or_404(lead_id)
+                    mqls = MQL.query.filter_by(lead_id=lead_id).all()
+                    for mql in mqls:
+                        sqls = SQL.query.filter_by(mql_id=mql.id).all()
+                        for sql in sqls:
+                            db.session.delete(sql)
+                        db.session.delete(mql)
+                    db.session.delete(lead)
+                    db.session.commit()
+                elif lead_type == 'outbound':
+                    lead = OutboundLead.query.get_or_404(lead_id)
+                    mqls = MQL.query.filter_by(outbound_lead_id=lead_id).all()
+                    for mql in mqls:
+                        sqls = SQL.query.filter_by(mql_id=mql.id).all()
+                        for sql in sqls:
+                            db.session.delete(sql)
+                        db.session.delete(mql)
+                    db.session.delete(lead)
+                    db.session.commit()
+                elif lead_type == 'mql':
+                    mql = MQL.query.get_or_404(lead_id)
+                    sqls = SQL.query.filter_by(mql_id=mql.id).all()
+                    for sql in sqls:
+                        db.session.delete(sql)
+                    db.session.delete(mql)
+                    db.session.commit()
+                elif lead_type == 'sql':
+                    sql = SQL.query.get_or_404(lead_id)
+                    db.session.delete(sql)
+                    db.session.commit()
+            elif action.startswith('save_'):
+                if lead_type == 'inbound':
+                    lead = InboundLead.query.get_or_404(lead_id)
+                    lead.name = request.form[f'name_{lead_id}']
+                    lead.email = request.form[f'email_{lead_id}']
+                    lead.phone = request.form[f'phone_{lead_id}']
+                    lead.created_at = datetime.strptime(request.form[f'created_at_{lead_id}'], '%Y-%m-%d')
+                    db.session.commit()
+                elif lead_type == 'outbound':
+                    lead = OutboundLead.query.get_or_404(lead_id)
+                    lead.name = request.form[f'name_{lead_id}']
+                    lead.email = request.form[f'email_{lead_id}']
+                    lead.phone = request.form[f'phone_{lead_id}']
+                    lead.created_at = datetime.strptime(request.form[f'created_at_{lead_id}'], '%Y-%m-%d')
+                    db.session.commit()
+                elif lead_type == 'mql':
+                    mql = MQL.query.get_or_404(lead_id)
+                    if mql.lead_type == 'inbound':
+                        lead = mql.inbound_lead
+                    else:
+                        lead = mql.outbound_lead
+                    lead.name = request.form[f'name_{lead.id}']
+                    lead.email = request.form[f'email_{lead.id}']
+                    lead.phone = request.form[f'phone_{lead.id}']
+                    lead.created_at = datetime.strptime(request.form[f'created_at_{lead.id}'], '%Y-%m-%d')
+                    mql.created_at = datetime.strptime(request.form[f'created_at_{lead.id}'], '%Y-%m-%d')
+                    db.session.commit()
+                elif lead_type == 'sql':
+                    sql = SQL.query.get_or_404(lead_id)
+                    if sql.mql.lead_type == 'inbound':
+                        lead = sql.mql.inbound_lead
+                    else:
+                        lead = sql.mql.outbound_lead
+                    lead.name = request.form[f'name_{sql.id}']
+                    lead.email = request.form[f'email_{sql.id}']
+                    lead.phone = request.form[f'phone_{sql.id}']
+                    sql.created_at = datetime.strptime(request.form[f'created_at_{sql.id}'], '%Y-%m-%d')
+                    db.session.commit()
+            elif action.startswith('mql_'):
+                if lead_type == 'inbound':
+                    existing_mql = MQL.query.filter_by(lead_id=lead_id, lead_type='inbound').first()
+                    if existing_mql:
+                        flash('Lead is already marked as MQL.')
+                    else:
+                        new_mql = MQL(lead_id=lead_id, lead_type='inbound', created_at=datetime.utcnow())
+                        db.session.add(new_mql)
+                        db.session.commit()
+            elif action.startswith('sql_'):
+                if lead_type == 'mql':
+                    existing_sql = SQL.query.filter_by(mql_id=lead_id).first()
+                    if existing_sql:
+                        flash('Lead is already marked as SQL.')
+                    else:
+                        new_sql = SQL(mql_id=lead_id, status='Qualified', created_at=datetime.utcnow())
+                        db.session.add(new_sql)
+                        db.session.commit()
+            return redirect(url_for('search_leads'))
+
+    return render_template('search_leads.html', title='Search Leads', results=results,
+                           lead_type=lead_type if request.method == 'POST' else None)
 
 
 @app.route('/inbound_leads', methods=['GET', 'POST'])
@@ -195,7 +301,6 @@ def add_inbound_lead():
         email = request.form['email']
         phone = request.form['phone']
 
-        # Перевірка на дублікат
         existing_lead = InboundLead.query.filter_by(email=email).first()
         if existing_lead:
             flash('Lead with this email already exists in Inbound Leads.')
