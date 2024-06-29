@@ -1,0 +1,29 @@
+/* Додаткові стилі для покращення вигляду */
+body {
+  background-color: #f8f9fa;
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+
+.jumbotron {
+  background-color: #e9ecef;
+  padding: 2rem 1rem;
+}
+
+.table {
+  margin-top: 20px;
+}
+
+.btn-primary, .btn-success, .btn-warning, .btn-danger {
+  margin-right: 5px;
+}
+
+.form-inline input {
+  margin-right: 10px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}

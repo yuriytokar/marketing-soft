@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>MQLs</h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Lead Type</th>
+        <th>Lead Name</th>
+        <th>Lead Email</th>
+        <th>Lead Phone</th>
+        <th>Created At</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for mql in mqls %}
+        <tr>
+          <form method="post">
+            <td>{{ mql.lead_type }}</td>
+            {% if mql.lead_type == 'inbound' %}
+              <td>{{ mql.inbound_lead.name }}</td>
+              <td>{{ mql.inbound_lead.email }}</td>
+              <td>{{ mql.inbound_lead.phone }}</td>
+            {% else %}
+              <td>{{ mql.outbound_lead.name }}</td>
+              <td>{{ mql.outbound_lead.email }}</td>
+              <td>{{ mql.outbound_lead.phone }}</td>
+            {% endif %}
+            <td>{{ mql.created_at.strftime('%Y-%m-%d') }}</td>
+            <td>
+              <input type="hidden" name="mql_id" value="{{ mql.id }}">
+              <button type="submit" name="action" value="sql_{{ mql.id }}" class="btn btn-success">Mark as SQL</button>
+              <button type="submit" name="action" value="delete_{{ mql.id }}" class="btn btn-danger">Delete</button>
+            </td>
+          </form>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

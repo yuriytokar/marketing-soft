@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Add Inbound Lead</h1>
+  <form method="post" class="form">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="phone">Phone</label>
+      <input type="text" id="phone" name="phone" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">Add</button>
+  </form>
+  <a href="{{ url_for('inbound_leads') }}" class="btn btn-secondary mt-2">Back to Inbound Leads</a>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>SQLs</h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Lead Name</th>
+        <th>Lead Email</th>
+        <th>Lead Phone</th>
+        <th>Status</th>
+        <th>Created At</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sql in sqls %}
+        <tr>
+          <form method="post">
+            {% if sql.mql.lead_type == 'inbound' %}
+              <td>{{ sql.mql.inbound_lead.name }}</td>
+              <td>{{ sql.mql.inbound_lead.email }}</td>
+              <td>{{ sql.mql.inbound_lead.phone }}</td>
+            {% else %}
+              <td>{{ sql.mql.outbound_lead.name }}</td>
+              <td>{{ sql.mql.outbound_lead.email }}</td>
+              <td>{{ sql.mql.outbound_lead.phone }}</td>
+            {% endif %}
+            <td>{{ sql.status }}</td>
+            <td>{{ sql.created_at.strftime('%Y-%m-%d') }}</td>
+            <td>
+              <input type="hidden" name="sql_id" value="{{ sql.id }}">
+              <button type="submit" name="action" value="delete_{{ sql.id }}" class="btn btn-danger">Delete</button>
+            </td>
+          </form>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
