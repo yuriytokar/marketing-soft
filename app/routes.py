@@ -203,7 +203,6 @@ def add_outbound_lead():
         email = request.form['email']
         phone = request.form['phone']
 
-        # Перевірка на дублікат
         existing_lead = InboundLead.query.filter_by(email=email).first()
         if existing_lead:
             flash('Lead with this email already exists in Inbound Leads.')
