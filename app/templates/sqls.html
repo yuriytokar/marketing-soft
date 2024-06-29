@@ -29,8 +29,8 @@
             <td><input type="date" name="created_at_{{ sql.id }}" value="{{ sql.created_at.strftime('%Y-%m-%d') }}" class="form-control" readonly></td>
             <td>
               <input type="hidden" name="sql_id" value="{{ sql.id }}">
-              <button type="button" class="btn btn-warning" onclick="enableEditing({{ sql.id }})">Edit</button>
-              <button type="submit" name="action" value="save_{{ sql.id }}" class="btn btn-success" style="display: none;">Save</button>
+              <button type="button" class="btn btn-warning mb-2" onclick="enableEditing({{ sql.id }})">Edit</button>
+              <button type="submit" name="action" value="save_{{ sql.id }}" class="btn btn-success mb-2" style="display: none;">Save</button>
               <button type="submit" name="action" value="delete_{{ sql.id }}" class="btn btn-danger">Delete</button>
             </td>
           </form>

@@ -27,9 +27,9 @@
             <td><input type="date" name="created_at_{{ mql.id }}" value="{{ mql.created_at.strftime('%Y-%m-%d') }}" class="form-control" readonly></td>
             <td>
               <input type="hidden" name="mql_id" value="{{ mql.id }}">
-              <button type="button" class="btn btn-warning" onclick="enableEditing({{ mql.id }})">Edit</button>
-              <button type="submit" name="action" value="save_{{ mql.id }}" class="btn btn-success" style="display: none;">Save</button>
-              <button type="submit" name="action" value="sql_{{ mql.id }}" class="btn btn-success">Mark as SQL</button>
+              <button type="button" class="btn btn-warning mb-2" onclick="enableEditing({{ mql.id }})">Edit</button>
+              <button type="submit" name="action" value="save_{{ mql.id }}" class="btn btn-success mb-2" style="display: none;">Save</button>
+              <button type="submit" name="action" value="sql_{{ mql.id }}" class="btn btn-success mb-2">Mark as SQL</button>
               <button type="submit" name="action" value="delete_{{ mql.id }}" class="btn btn-danger">Delete</button>
             </td>
           </form>

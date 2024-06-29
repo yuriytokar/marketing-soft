@@ -47,9 +47,9 @@
               <td>
                 <input type="hidden" name="lead_id" value="{{ result.id }}">
                 <input type="hidden" name="lead_type" value="{{ lead_type }}">
-                <button type="button" class="btn btn-warning" onclick="enableEditing({{ result.id }})">Edit</button>
-                <button type="submit" name="action" value="save_{{ result.id }}" class="btn btn-success" style="display: none;">Save</button>
-                <button type="submit" name="action" value="delete_{{ result.id }}" class="btn btn-danger">Delete</button>
+                <button type="button" class="btn btn-warning mb-2" onclick="enableEditing({{ result.id }})">Edit</button>
+                <button type="submit" name="action" value="save_{{ result.id }}" class="btn btn-success mb-2" style="display: none;">Save</button>
+                <button type="submit" name="action" value="delete_{{ result.id }}" class="btn btn-danger mb-2">Delete</button>
                 {% if lead_type == 'inbound' %}
                   <button type="submit" name="action" value="mql_{{ result.id }}" class="btn btn-success">Mark as MQL</button>
                 {% elif lead_type == 'mql' %}
